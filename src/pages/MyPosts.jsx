@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Container, PostCard } from "../components";
-import appwriteService from "../appwrite/config";
-import { Query } from "appwrite";
-
-// 👉 change this import according to your auth setup
 import { useSelector } from "react-redux";
+import appwriteService from "../appwrite/config";
+import { Container, PostCard } from "../components";
 
 function MyPosts() {
+  const user = useSelector((state) => state.auth.userData);
   const [posts, setPosts] = useState([]);
-  const user = useSelector((state) => state.auth.user);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
     appwriteService
-      .getPosts([
-        Query.equal("userId", user.$id),
-        Query.equal("status", "active"),
-      ])
+      .getUserPosts(user.$id)
       .then((res) => setPosts(res?.documents || []))
-      .catch(() => setPosts([]));
+      .finally(() => setLoading(false));
   }, [user]);
+
+  if (loading) {
+    return <div className="text-center py-10">Loading your posts...</div>;
+  }
 
   return (
     <div className="w-full py-8">
       <Container>
-        <h1 className="text-2xl font-bold mb-6">My Posts</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">My Posts</h1>
 
         <div className="flex flex-wrap">
           {posts.length === 0 ? (
-            <p className="text-center w-full">You haven't posted anything yet.</p>
+            <h2 className="mx-auto text-lg">
+              You haven’t posted anything yet.
+            </h2>
           ) : (
             posts.map((post) => (
               <div key={post.$id} className="p-2 w-1/4">

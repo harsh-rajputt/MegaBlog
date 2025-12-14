@@ -8,11 +8,8 @@ function Home() {
 
   useEffect(() => {
     appwriteService
-      .getPosts() // default = active posts
-      .then((result) => {
-        setPosts(result?.documents || []);
-      })
-      .catch(() => setPosts([]))
+      .getAllPosts()
+      .then((res) => setPosts(res?.documents || []))
       .finally(() => setLoading(false));
   }, []);
 
