@@ -135,6 +135,38 @@ export class Service {
         );
         
     }
+
+    // Get all active posts (Home)
+async getPosts() {
+  try {
+    return await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      [Query.equal("status", "active")]
+    );
+  } catch (error) {
+    console.log("getPosts error", error);
+    return null;
+  }
+}
+
+// Get posts of logged-in user (My Posts)
+async getUserPosts(userId) {
+  try {
+    return await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      [
+        Query.equal("userId", userId),
+        Query.equal("status", "active"),
+      ]
+    );
+  } catch (error) {
+    console.log("getUserPosts error", error);
+    return null;
+  }
+}
+
 }
 
 const service = new Service();
