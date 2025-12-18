@@ -5,13 +5,18 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function EditPost() {
   const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { slug } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!slug) return navigate("/");
-    appwriteService.getPost(slug).then(setPost);
+    appwriteService.getPost(slug).then(setPost).finally(() => setLoading(false));
   }, [slug, navigate]);
+
+   if (loading) {
+    return <div className="text-center py-10">Loading posts...</div>;
+  }
 
   return post ? (
     <Container className="py-8">
