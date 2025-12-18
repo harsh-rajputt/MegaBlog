@@ -17,127 +17,72 @@ export class Service {
 
   // ================= POSTS =================
 
-  // Create Post
   async createPost({ title, slug, content, featuredImage, status, userId }) {
-    try {
-      return await this.databases.createDocument(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        slug,
-        {
-          title,
-          content,
-          featuredImage,
-          status,
-          userId,
-        }
-      );
-    } catch (error) {
-      console.log("createPost error", error);
-      throw error;
-    }
+    return await this.databases.createDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      slug,
+      {
+        title,
+        slug,            // ✅ ensured slug is stored
+        content,
+        featuredImage,
+        status,
+        userId,
+      }
+    );
   }
 
-  // Update Post
-  async updatePost(slug, data) {
-    try {
-      return await this.databases.updateDocument(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        slug,
-        data
-      );
-    } catch (error) {
-      console.log("updatePost error", error);
-      throw error;
-    }
+  async updatePost(documentId, data) {
+    return await this.databases.updateDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      documentId,
+      data
+    );
   }
 
-  // Delete Post
-  async deletePost(slug) {
-    try {
-      await this.databases.deleteDocument(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        slug
-      );
-      return true;
-    } catch (error) {
-      console.log("deletePost error", error);
-      return false;
-    }
+  async deletePost(documentId) {
+    await this.databases.deleteDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      documentId
+    );
+    return true;
   }
 
-  // Get Single Post
-  async getPost(slug) {
-    try {
-      return await this.databases.getDocument(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        slug
-      );
-    } catch (error) {
-      console.log("getPost error", error);
-      return null;
-    }
+  async getPost(documentId) {
+    return await this.databases.getDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      documentId
+    );
   }
 
-  // ✅ HOME → ALL ACTIVE POSTS (ALL USERS)
   async getAllPosts() {
-    try {
-      return await this.databases.listDocuments(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        [Query.equal("status", "active")]
-      );
-    } catch (error) {
-      console.log("getAllPosts error", error);
-      return null;
-    }
-  }
-
-  // ✅ MY POSTS → ONLY LOGGED-IN USER POSTS
-  async getUserPosts(userId) {
-    try {
-      return await this.databases.listDocuments(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        [
-          Query.equal("userId", userId),
-          Query.equal("status", "active"),
-        ]
-      );
-    } catch (error) {
-      console.log("getUserPosts error", error);
-      return null;
-    }
+    return await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      [Query.equal("status", "active")]
+    );
   }
 
   // ================= FILES =================
 
   async uploadFile(file) {
-    try {
-      return await this.bucket.createFile(
-        conf.appwriteBucketId,
-        ID.unique(),
-        file
-      );
-    } catch (error) {
-      console.log("uploadFile error", error);
-      return null;
-    }
+    return await this.bucket.createFile(
+      conf.appwriteBucketId,
+      ID.unique(),
+      file
+    );
   }
 
   async deleteFile(fileId) {
-    try {
-      await this.bucket.deleteFile(conf.appwriteBucketId, fileId);
-      return true;
-    } catch (error) {
-      console.log("deleteFile error", error);
-      return false;
-    }
+    await this.bucket.deleteFile(conf.appwriteBucketId, fileId);
+    return true;
   }
 
+  // ✅ FIXED
   getFilePreview(fileId) {
     return this.bucket.getFileView(conf.appwriteBucketId, fileId);
   }
