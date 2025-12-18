@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 
 function MyPosts() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const userData = useSelector((state) => state.auth.userData);
 
   useEffect(() => {
@@ -12,8 +13,12 @@ function MyPosts() {
 
     appwriteService.getUserPosts(userData.$id).then((res) => {
       if (res) setPosts(res.documents);
-    });
+    }).finally(() => setLoading(false));
   }, [userData]);
+
+  if (loading) {
+    return <div className="text-center py-10">Loading posts...</div>;
+  }
 
   if (posts.length === 0) {
     return (
