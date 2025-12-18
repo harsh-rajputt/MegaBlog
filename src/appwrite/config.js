@@ -22,48 +22,51 @@ export class Service {
       conf.appwriteDatabaseId,
       conf.appwriteCollectionId,
       slug,
-      {
-        title,
-        slug,            // ✅ ensured slug is stored
-        content,
-        featuredImage,
-        status,
-        userId,
-      }
+      { title, content, featuredImage, status, userId }
     );
   }
 
-  async updatePost(documentId, data) {
+  async updatePost(slug, data) {
     return await this.databases.updateDocument(
       conf.appwriteDatabaseId,
       conf.appwriteCollectionId,
-      documentId,
+      slug,
       data
     );
   }
 
-  async deletePost(documentId) {
+  async deletePost(slug) {
     await this.databases.deleteDocument(
       conf.appwriteDatabaseId,
       conf.appwriteCollectionId,
-      documentId
+      slug
     );
     return true;
   }
 
-  async getPost(documentId) {
+  async getPost(slug) {
     return await this.databases.getDocument(
       conf.appwriteDatabaseId,
       conf.appwriteCollectionId,
-      documentId
+      slug
     );
   }
 
+  // HOME POSTS
   async getAllPosts() {
     return await this.databases.listDocuments(
       conf.appwriteDatabaseId,
       conf.appwriteCollectionId,
       [Query.equal("status", "active")]
+    );
+  }
+
+  // ✅ MY POSTS (FIXED)
+  async getUserPosts(userId) {
+    return await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      [Query.equal("userId", userId)]
     );
   }
 
@@ -82,7 +85,7 @@ export class Service {
     return true;
   }
 
-  // ✅ FIXED
+  // ✅ IMAGE PREVIEW FIX
   getFilePreview(fileId) {
     return this.bucket.getFileView(conf.appwriteBucketId, fileId);
   }

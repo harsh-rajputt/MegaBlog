@@ -1,24 +1,34 @@
 import React, { useEffect, useState } from "react";
-import appwriteService from "../appwrite/config";
 import { Container, PostCard } from "../components";
+import appwriteService from "../appwrite/config";
 
 function Home() {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+ useEffect(() => {
     appwriteService
       .getAllPosts()
       .then((res) => setPosts(res?.documents || []))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
+   if (loading) {
     return <div className="text-center py-10">Loading posts...</div>;
   }
 
+  if (posts.length === 0) {
+    return (
+      <Container>
+        <h1 className="text-center text-2xl mt-10">
+          No posts available
+        </h1>
+      </Container>
+    );
+  }
+
   return (
-    <div className="w-full py-8">
+     <div className="w-full py-8">
       <Container>
         <div className="flex flex-wrap">
           {posts.length === 0 ? (

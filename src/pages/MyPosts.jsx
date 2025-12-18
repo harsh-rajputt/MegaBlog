@@ -11,24 +11,22 @@ function MyPosts() {
     if (!userData?.$id) return;
 
     appwriteService.getUserPosts(userData.$id).then((res) => {
-      if (res?.documents) {
-        setPosts(res.documents);
-      }
+      if (res) setPosts(res.documents);
     });
   }, [userData]);
 
-  if (!posts.length) {
+  if (posts.length === 0) {
     return (
-      <Container className="py-8 text-center">
-        <h1 className="text-2xl font-bold">
-          You haven’t created any posts yet
+      <Container>
+        <h1 className="text-center text-2xl mt-10">
+          No posts created yet
         </h1>
       </Container>
     );
   }
 
   return (
-    <Container className="py-8">
+    <Container>
       <div className="flex flex-wrap">
         {posts.map((post) => (
           <div key={post.$id} className="w-1/4 p-2">
